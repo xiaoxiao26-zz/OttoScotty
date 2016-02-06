@@ -115,7 +115,7 @@ function processRequests()
         currentMessages = getMessages();
         setTimeout(processRequests,5000);
       }, 1000);
-      
+
       return;
     }
   }
@@ -171,3 +171,4 @@ processRequests();
 //  //document.getElementsByTagName("form")[0].submit()
 
 //document.querySelectorAll("[data-sigil=message-text]")
+
