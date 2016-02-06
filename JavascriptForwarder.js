@@ -173,8 +173,8 @@ function processMessage(msg)
       }
       else
       {
-        console.log("sending latex");
         $.post(url + 'run_latex',{'code': msg}, send_to_client);
+        console.log("sending latex");
       }
       //sendMessage(result);
     }
