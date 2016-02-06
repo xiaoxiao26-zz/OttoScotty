@@ -136,7 +136,19 @@ function processRequests()
 
 function processMessage(msg)
 {
-  if(msg.length > 0 && msg.charAt(0)=="$")
+  var msg_is_javascript = true;
+
+  var send_to_client = function(data) {
+    console.log("done sending!");
+    console.log(data.result);
+    sendMessage(data.result);
+  }
+
+  if(msg.length > 2 && msg.charAt(1) == "$" && msg.charAt(0) == "$") { // latex message
+    msg = msg.substring(2);
+    msg_is_javascript = false;
+  }
+  else if(msg.length > 1 && msg.charAt(0)=="$") // javascript message
   {
     msg = msg.substring(1);
   }
@@ -144,6 +156,7 @@ function processMessage(msg)
   {
     return;
   }
+
   if(blacklisted(msg))
   {
     sendMessage("[BLACKLISTED]");
@@ -153,11 +166,16 @@ function processMessage(msg)
     try
     {
       //var result = eval(msg);
-      $.post(url + 'run_javascript',{'code': msg}, function(data){
-        console.log("done sending!");
-        console.log(data.result);
-        sendMessage(data.result);
-      });
+      if (msg_is_javascript) 
+      {
+        $.post(url + 'run_javascript',{'code': msg}, send_to_client);
+        console.log("sending javascript");
+      }
+      else
+      {
+        console.log("sending latex");
+        $.post(url + 'run_latex',{'code': msg}, send_to_client);
+      }
       //sendMessage(result);
     }
     catch(e)
