@@ -26,7 +26,7 @@ reasonable code ever helped anyone?
 ### Can I run my own version of Otto Scotty using this code?
 Sure, but I don't feel like typing up instructions right now. Do note that the
 computer running the Chrome extension also needs to install another Chrome
-extension called Content-Security-Policy. This is because running this bot
+extension called Disable Content-Security-Policy. This is because running this bot
 violates the Facebook Content Security Policy. Wait, what?
 
 ### What's next for Otto?
