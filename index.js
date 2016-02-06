@@ -1,8 +1,10 @@
 var express = require('express')
-var Sandbox = require("sandbox")
+var Sandbox = require('sandbox')
+var cors = require('cors')
 
 var s = new Sandbox()
 var app = express()
+app.use(cors());
 app.set('port', (process.env.PORT || 5000))
 
 app.get('/run_javascript', function(req, resp) {
