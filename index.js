@@ -7,6 +7,10 @@ var app = express()
 app.use(cors());
 app.set('port', (process.env.PORT || 5000))
 
+app.get('/', function(req, resp) {
+  resp.send("Hello Subra Suresh");
+});
+
 app.get('/run_javascript', function(req, resp) {
   s.run(req.body.code, function(output) {
     resp.json(output);
