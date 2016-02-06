@@ -193,7 +193,7 @@ function processMessage(msg)
       else
       {
         console.log("latex",msg);
-        sendMessage("http://chart.apis.google.com/chart?cht=tx&chl=" + encodeURIComponent(msg));
+        sendMessage("http://chart.apis.google.com/chart?cht=tx&chl=" + encodeURIComponent(msg.replace(/\n/g," ")));
         //http://quicklatex.com/
         //console.log("sending latex");
         /*$.post("https://quicklatex.com/latex3.f",{'formula': "[math]"+msg+"[/math]",
@@ -249,7 +249,7 @@ function checkMessages()
   if(allMessages[href] === undefined)
   {
     allMessages[href] = getMessages();
-    sendMessage("Hi, I'm Otto Scotty! Send me a message starting with $ for Javascript or $$ for Latex.");
+    sendMessage("Hi, I'm Otto Scotty! Send me a message starting with $ for Javascript or $$ for LaTeX.");
   }
   else
   {
