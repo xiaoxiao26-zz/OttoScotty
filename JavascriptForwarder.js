@@ -84,7 +84,12 @@ function sendMessage(msg)
   {
     return;
   }
-  currentMessages.push(msg);
+  var currentMessages = allMessages[document.location.href];
+  if(currentMessages === undefined)
+  {
+    currentMessages = getMessages();
+  }
+  currentMessages.push(new Message(msg,null, true));
   document.getElementsByName("message_body")[0].value=msg;
   document.querySelector("[value=Reply]").click();
 }
@@ -95,7 +100,19 @@ function getMessages()
   var msgs = [];
   for(var i = 0; i < messages.length; i++)
   {
-    msgs.push(messages[i].innerText);
+    var parent = $(messages[i]).closest("._42ef");
+    if(parent.find)
+    {
+      var timestamp = parent.find(".timestamp").attr("data-utime");
+      var isScotty = false;
+      msgs.push(new Message(messages[i].innerText,timestamp, isScotty));
+    }
+    else
+    {
+      window.parents = parent;
+      console.log(parent);
+      msgs.push(new Message(messages[i].innerText,null, true));
+    }
   }
   return msgs;
 }
@@ -119,19 +136,20 @@ function processRequests()
   var chats = document.getElementsByClassName("_k_");
   for(var i = 0; i < chats.length; i++)
   {
-    var txt = chats[i].innerText;
-    if(txt.indexOf("new")!=-1 && txt.toLowerCase().indexOf("yo")!=-1)
+    var news = chats[i].getElementsByClassName("_l6");
+    if(news.length > 0 && news[0].innerText.indexOf("new")!=-1)
     {
       simulate(chats[i],"click");
       setTimeout(function(){
-        currentMessages = getMessages();
-        setTimeout(processRequests,5000);
+        checkMessages();
+        setTimeout(processRequests,1000);
       }, 1000);
 
       return;
     }
   }
-  setTimeout(processRequests,2000);
+  checkMessages();
+  setTimeout(processRequests,1000);
 }
 
 function processMessage(msg)
@@ -144,7 +162,7 @@ function processMessage(msg)
     sendMessage(data.result);
   }
 
-  if(msg.length > 2 && msg.charAt(1) == "$" && msg.charAt(0) == "$") { // latex message
+  if(msg.length >= 2 && msg.charAt(1) == "$" && msg.charAt(0) == "$") { // latex message
     msg = msg.substring(2);
     msg_is_javascript = false;
   }
@@ -165,6 +183,7 @@ function processMessage(msg)
   {
     try
     {
+      console.log(msg, msg_is_javascript);
       //var result = eval(msg);
       if (msg_is_javascript) 
       {
@@ -173,33 +192,83 @@ function processMessage(msg)
       }
       else
       {
-        $.post(url + 'run_latex',{'code': msg}, send_to_client);
-        console.log("sending latex");
+        console.log("latex",msg);
+        sendMessage("http://chart.apis.google.com/chart?cht=tx&chl=" + encodeURIComponent(msg));
+        //http://quicklatex.com/
+        //console.log("sending latex");
+        /*$.post("https://quicklatex.com/latex3.f",{'formula': "[math]"+msg+"[/math]",
+        "fsize":"17px",
+        "fcolor":"000000",
+        "mode":0,
+        "out":"1",
+        "remhost":"quicklatex.com",
+        "preamble":"\\usepackage{amsmath}\n\\usepackage{amsfonts}\n\\usepackage{amssymb}",
+        "rnd":(Math.random()*100)},
+        send_to_client);*/
+        //$.post(url + 'run_latex',{'code': msg}, send_to_client);
+        //console.log("sending latex");
       }
       //sendMessage(result);
     }
     catch(e)
     {
+      console.log("Error: "+e);
       sendMessage(e);
     }
   }
 }
 
-var currentMessages = getMessages();
+function peek(arr)
+{
+  return arr[arr-1];
+}
+
+function Message(msg, timestamp, isScotty)
+{
+  this.msg = msg;
+  this.timestamp = timestamp;
+  this.isScotty = isScotty;
+}
+
+function hasMessage(current, msg)
+{
+  for(var j = 0; j < current.length; j++)
+  {
+    if(current[j].msg === msg.msg && (current[j].isScotty || current[j].timestamp === msg.timestamp))
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+var allMessages = {};
 function checkMessages()
 {
-  var msgs = getMessages();
-  if(msgs.length > currentMessages.length)
+  var href = document.location.href;
+  if(allMessages[href] === undefined)
   {
-    for(var i = currentMessages.length; i < msgs.length; i++)
+    allMessages[href] = getMessages();
+    sendMessage("Hi, I'm Otto Scotty! Send me a message starting with $ for Javascript or $$ for Latex.");
+  }
+  else
+  {
+    var currentMessages = allMessages[href];
+
+    var msgs = getMessages();
+    for(var i = msgs.length-1; i>=0; i--)
     {
-      processMessage(msgs[i]);
-      currentMessages.push(msgs[i]);
+      
+      if(!hasMessage(currentMessages, msgs[i]))
+      {
+        console.log("Got " + msgs[i].msg);
+        currentMessages.push(msgs[i]);
+        processMessage(msgs[i].msg);
+      }
     }
   }
 }
 
-setInterval(checkMessages,1000);
 processRequests();
 
 
