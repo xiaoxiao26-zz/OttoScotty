@@ -205,6 +205,8 @@ function processMessage(msg)
         "preamble":"\\usepackage{amsmath}\n\\usepackage{amsfonts}\n\\usepackage{amssymb}",
         "rnd":(Math.random()*100)},
         send_to_client);*/
+        //$.post(url + 'run_latex',{'code': msg}, send_to_client);
+        //console.log("sending latex");
       }
       //sendMessage(result);
     }
