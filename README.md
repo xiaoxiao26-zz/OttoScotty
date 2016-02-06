@@ -19,10 +19,10 @@ brackets to your bff Otto, not typing Javascript. They'll never know the truth.
 This contains the backend to Otto Scotty. You can see its BLAZING FAST Node.js
 server, a LIGHTNING QUICK Chrome extension that runs on Alan Jaffe's computer to
 run Otto, and the HIGHLY SCALABLE AND ROBUST javascript code that the
-aforementioned Chrome extension runs on. Some may call this disorganized. Some
-may say that we should split these disparate components into separate repos. But
-those people are fools. When has writing maintainble, reasonable code ever
-helped anyone?
+aforementioned EXTENSIBLE Chrome extension runs on. Some may call this
+disorganized. Some may say that we should split these disparate components into
+separate repos. But those people are fools. When has writing maintainble,
+reasonable code ever helped anyone?
 
 ### Can I run my own version of Otto Scotty using this code?
 Sure, but I don't feel like typing up instructions right now. Do note that the
