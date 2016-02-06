@@ -140,8 +140,17 @@ function processMessage(msg)
   {
     try
     {
-      var result = eval(msg);
-      sendMessage(result);
+      //var result = eval(msg);
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+          if (xhr.readyState == XMLHttpRequest.DONE) {
+            console.log("done sending!");
+            console.log(xhr.responseText);
+          }
+      }
+      xhr.open('POST', url, false);
+      xhr.send(JSON.stringify({'code': msg}));
+      //sendMessage(result);
     }
     catch(e)
     {
