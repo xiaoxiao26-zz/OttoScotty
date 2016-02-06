@@ -154,7 +154,19 @@ function processRequests()
 
 function processMessage(msg)
 {
-  if(msg.length > 0 && msg.charAt(0)=="$")
+  var msg_is_javascript = true;
+
+  var send_to_client = function(data) {
+    console.log("done sending!");
+    console.log(data.result);
+    sendMessage(data.result);
+  }
+
+  if(msg.length >= 2 && msg.charAt(1) == "$" && msg.charAt(0) == "$") { // latex message
+    msg = msg.substring(2);
+    msg_is_javascript = false;
+  }
+  else if(msg.length > 1 && msg.charAt(0)=="$") // javascript message
   {
     msg = msg.substring(1);
   }
@@ -162,6 +174,7 @@ function processMessage(msg)
   {
     return;
   }
+
   if(blacklisted(msg))
   {
     sendMessage("[BLACKLISTED]");
@@ -170,16 +183,34 @@ function processMessage(msg)
   {
     try
     {
+      console.log(msg, msg_is_javascript);
       //var result = eval(msg);
-      $.post(url + 'run_javascript',{'code': msg}, function(data){
-        console.log("done sending!");
-        console.log(data.result);
-        sendMessage(data.result);
-      });
+      if (msg_is_javascript) 
+      {
+        $.post(url + 'run_javascript',{'code': msg}, send_to_client);
+        console.log("sending javascript");
+      }
+      else
+      {
+        console.log("latex",msg);
+        sendMessage("http://chart.apis.google.com/chart?cht=tx&chl=" + encodeURIComponent(msg));
+        //http://quicklatex.com/
+        //console.log("sending latex");
+        /*$.post("https://quicklatex.com/latex3.f",{'formula': "[math]"+msg+"[/math]",
+        "fsize":"17px",
+        "fcolor":"000000",
+        "mode":0,
+        "out":"1",
+        "remhost":"quicklatex.com",
+        "preamble":"\\usepackage{amsmath}\n\\usepackage{amsfonts}\n\\usepackage{amssymb}",
+        "rnd":(Math.random()*100)},
+        send_to_client);*/
+      }
       //sendMessage(result);
     }
     catch(e)
     {
+      console.log("Error: "+e);
       sendMessage(e);
     }
   }
