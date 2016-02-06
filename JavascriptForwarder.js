@@ -1,4 +1,15 @@
 var url = "https://quiet-depths-46144.herokuapp.com/";
+
+//Load jQuery library using plain JavaScript
+//http://www.sitepoint.com/dynamically-load-jquery-library-javascript/
+(function(){
+  var newscript = document.createElement('script');
+     newscript.type = 'text/javascript';
+     newscript.async = true;
+     newscript.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(newscript);
+})();
+
 //http://stackoverflow.com/questions/6157929/how-to-simulate-a-mouse-click-using-javascript
 function simulate(element, eventName)
 {
@@ -142,15 +153,11 @@ function processMessage(msg)
     try
     {
       //var result = eval(msg);
-      var xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-          if (xhr.readyState == XMLHttpRequest.DONE) {
-            console.log("done sending!");
-            console.log(xhr.responseText);
-          }
-      }
-      xhr.open('POST', url + 'run_javascript', false);
-      xhr.send(JSON.stringify({'code': msg}));
+      $.post(url + 'run_javascript',{'code': msg}, function(data){
+        console.log("done sending!");
+        console.log(data.result);
+        sendMessage(data.result);
+      });
       //sendMessage(result);
     }
     catch(e)
