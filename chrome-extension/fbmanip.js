@@ -1,3 +1,4 @@
+var url = "https://quiet-depths-46144.herokuapp.com/";
 //http://stackoverflow.com/questions/6157929/how-to-simulate-a-mouse-click-using-javascript
 function simulate(element, eventName)
 {
@@ -115,7 +116,7 @@ function processRequests()
         currentMessages = getMessages();
         setTimeout(processRequests,5000);
       }, 1000);
-      
+
       return;
     }
   }
@@ -140,8 +141,17 @@ function processMessage(msg)
   {
     try
     {
-      var result = eval(msg);
-      sendMessage(result);
+      //var result = eval(msg);
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+          if (xhr.readyState == XMLHttpRequest.DONE) {
+            console.log("done sending!");
+            console.log(xhr.responseText);
+          }
+      }
+      xhr.open('POST', url + 'run_javascript', false);
+      xhr.send(JSON.stringify({'code': msg}));
+      //sendMessage(result);
     }
     catch(e)
     {
@@ -171,3 +181,4 @@ processRequests();
 //  //document.getElementsByTagName("form")[0].submit()
 
 //document.querySelectorAll("[data-sigil=message-text]")
+
